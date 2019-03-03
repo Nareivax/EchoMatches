@@ -54,8 +54,9 @@ def connect_server():
 def send_msg(content):
     '''Send any message to the server and wait for response'''
     EF_SOCKET.sendall(content)
-    data = EF_SOCKET.recv(1024)
-    print('Received', repr(data))
+    response = EF_SOCKET.recv(1024)
+    print('Received', repr(response))
+    return json.loads(response)
 
 def setup_msg(header, content):
     '''Setup message json'''
@@ -68,12 +69,10 @@ class Login(Screen):
         '''Used to login in a user'''
         app = App.get_running_app()
 
-        content = setup_msg(MsgType['USERNAME'], login_text)
+        login_msg = setup_msg(MsgType['USERNAME'], login_text)
+        response = send_msg(login_msg)
 
-        send_msg(content)
-
-        #app.username = login_text
-        if login_text == 'quagga':
+        if response['content'] == Status['OK']:
             self.manager.transition = SlideTransition(direction="left")
             self.manager.current = 'lobby'
 
