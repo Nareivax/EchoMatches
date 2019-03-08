@@ -76,16 +76,12 @@ class Login(Screen):
             self.manager.transition = SlideTransition(direction="left")
             self.manager.current = 'lobby'
 
-            app.config.read(app.app_config())
-            app.config.write()
-
     def reset_login(self):
         '''Clear the text fields'''
         self.ids['login'].text = ""
 
 class EchoMatches(App):
     '''Class for client app'''
-    username = StringProperty(None)
 
     print EF_SOCKET
     print '\n'
@@ -98,20 +94,6 @@ class EchoMatches(App):
         manager.add_widget(Lobby(name='lobby'))
 
         return manager
-
-    def app_config(self):
-        '''Configure the app'''
-        if not self.username:
-            return super(EchoMatches, self).get_application_config()
-
-        conf_directory = self.user_data_dir + '/' + self.username
-
-        if not os.path.exists(conf_directory):
-            os.makedirs(conf_directory)
-
-        return super(EchoMatches, self).get_application_config(
-            '%s/config.cfg' % (conf_directory)
-        )
 
 if __name__ == '__main__':
     EchoMatches().run()
