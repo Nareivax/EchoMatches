@@ -71,7 +71,7 @@ class EchoClient(Thread):
                         # We're tired and should pause for now take time later to clean up this code
                         # We should use a base with better enumerations and all
                         # E.g. STATUS_OK = 1 but I'm not sure how all of that works in python
-                if client_msg['type'] == MsgType['USERNAME']: #likely needs different message type/ if statement or just not in if statement
+                if client_msg['type'] == MsgType['AVAIL']: #likely needs different message type/ if statement or just not in if statement
                     # Setup a thread that polls with this message type every few seconds
                     users = REDIS_CONN.lrange('clients', 0, 10000000)
                     _clientconn.send(json.dumps(users))
