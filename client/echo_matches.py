@@ -13,8 +13,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
 
 from client.lobby import Lobby
 from client.select import Select
-from echo_common.msg_types import MsgType
-from echo_common.status_types import Status
+from client.login import Login
 
 ###### Host and Port variables for socket connections ######
 HOST = '127.0.0.1'
@@ -33,36 +32,6 @@ def signal_handler():
 
 signal.signal(signal.SIGINT, signal_handler)
 
-def send_msg(content):
-    '''Send any message to the server and wait for response'''
-    EF_SOCKET = ECHO_SERVER._get_socket()
-    EF_SOCKET.sendall(content.encode())
-    response = EF_SOCKET.recv(1024)
-    print('Received', repr(response))
-    return json.loads(response)
-
-def setup_msg(header, content):
-    '''Setup message json'''
-    msg = json.dumps({'type': header, 'content': content})
-    return msg
-
-class Login(Screen):
-    '''Class for the login screen on client app'''
-    def user_login(self, login_text):
-        '''Used to login in a user'''
-        app = App.get_running_app()
-
-        login_msg = setup_msg(MsgType['USERNAME'], login_text)
-        response = send_msg(login_msg)
-
-        if response['content'] == Status['OK']:
-            self.manager.transition = SlideTransition(direction="left")
-            self.manager.current = 'lobby'
-
-    def reset_login(self):
-        '''Clear the text fields'''
-        self.ids['login'].text = ""
-
 class EchoMatches(App):
     '''Class for client app'''
 
@@ -78,6 +47,19 @@ class EchoMatches(App):
         manager.add_widget(Lobby(name='lobby'))
 
         return manager
+
+    def send_msg(self, content):
+        '''Send any message to the server and wait for response'''
+        EF_SOCKET = ECHO_SERVER._get_socket()
+        EF_SOCKET.sendall(content.encode())
+        response = EF_SOCKET.recv(1024)
+        print('Received', repr(response))
+        return json.loads(response)
+
+    def setup_msg(self, header, content):
+        '''Setup message json'''
+        msg = json.dumps({'type': header, 'content': content})
+        return msg
 
 if __name__ == '__main__':
 
