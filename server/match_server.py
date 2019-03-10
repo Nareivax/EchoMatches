@@ -8,8 +8,8 @@ import json
 from threading import Thread
 
 import redis
-from echo_common import MsgType
-from echo_common import Status
+from echo_common.msg_types import MsgType
+from echo_common.status_types import Status
 
 HOST = '127.0.0.1'
 PORT = 8008
@@ -24,7 +24,7 @@ _fighterthreads = []
 
 def signal_handler(sig, frame):
     '''User SigKill handler'''
-    print 'You pressed Ctrl+C!'
+    print('You pressed Ctrl+C!')
     _echosocket.close()
     _clientconn.close()
     sys.exit(0)
@@ -42,31 +42,31 @@ class EchoClient(Thread):
     def __init__(self, addr):
         Thread.__init__(self)
         self.addr = addr
-        print "[+] New server socket thread started for " + addr[0] + ":" + str(addr[1])
+        print("[+] New server socket thread started for " + addr[0] + ":" + str(addr[1]))
 
     def run(self):
         global _clientconn
         while True:
-            data = _clientconn.recv(1024)
+            data = _clientconn.recv(1024).decode()
             if not data:
                 time.sleep(1)
             else:
                 try:
                     client_msg = json.loads(data)
                 except json.error as msg:
-                    print 'Could not load JSON: ' + msg
+                    print('Could not load JSON: ' + msg)
 
                 if client_msg['type'] == MsgType['USERNAME']:
                     if REDIS_CONN.hexists(client_msg['content'], 'ip'):
                         reply_msg = setup_msg(MsgType['STATUS'], Status['ERROR'])
-                        _clientconn.send(reply_msg)
+                        _clientconn.send(reply_msg.encode())
                     else:
-                        print client_msg['type']
+                        print(client_msg['type'])
                         rdata = {"ip":self.addr[0], "port":str(self.addr[1])}
                         REDIS_CONN.hmset(client_msg['content'], rdata)
                         REDIS_CONN.lpush('clients', client_msg['content'])
                         reply_msg = setup_msg(MsgType['STATUS'], Status['OK'])
-                        _clientconn.send(reply_msg)
+                        _clientconn.send(reply_msg.encode())
                         # Need to send an okay status here
                         # We're tired and should pause for now take time later to clean up this code
                         # We should use a base with better enumerations and all
@@ -76,7 +76,7 @@ class EchoClient(Thread):
                     users = REDIS_CONN.lrange('clients', 0, 10000000)
                     _clientconn.send(json.dumps(users))
 
-                print client_msg
+                print(client_msg)
 
 def listen():
     '''Listen for _clientconnections from clients'''
@@ -101,10 +101,10 @@ def listen():
             continue
         break
     if _echosocket is None:
-        print 'could not open socket'
+        print('could not open socket')
         sys.exit(1)
     _clientconn, addr = _echosocket.accept()
-    print 'Connected by', addr
+    print('Connected by', addr)
     return addr
 
 def main():
