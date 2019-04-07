@@ -76,6 +76,16 @@ class EchoClient(Thread):
                     users = REDIS_CONN.lrange('clients', 0, 10000000)
                     _clientconn.send(json.dumps(users))
 
+                if client_msg['type'] == MsgType['CREATE']:
+                    if REDIS_CONN.hexists(client_msg['content'], 'ip'):
+                        reply_msg = setup_msg(MsgType['STATUS'], Status['ERROR'])
+                        _clientconn.send(reply_msg.encode())
+                    else:
+                        
+
+                if client_msg['type'] == MsgType['INV']:
+                    print('inite')
+
                 print(client_msg)
 
 def listen():

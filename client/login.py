@@ -10,17 +10,17 @@ from echo_common.status_types import Status
 
 class Login(Screen):
     '''Class for the login screen on client app'''
-    def user_login(self, login_text):
+    def user_login(self, login_text, login_type):
         '''Used to login in a user'''
         app = App.get_running_app()
 
-        login_msg = app.setup_msg(MsgType['USERNAME'], login_text)
+        login_msg = app.setup_msg(login_type, login_text)
         response = app.send_msg(login_msg)
         return response
 
     def join_lobby(self, login_text):
         '''Join an already created lobby'''
-        response = self.user_login(login_text)
+        response = self.user_login(login_text, MsgType['JOIN'])
 
         if response['content'] == Status['OK']:
             invite_popup = InviteDialog(self)
@@ -30,6 +30,10 @@ class Login(Screen):
 
     def create_lobby(self, login_text):
         '''Start a new lobby'''
+        response = self.user_login(login_text, MsgType['CREATE'])
+
+        if response['content'] == Status['OK']:
+            self.manager.current = 'lobby'
 
     def reset_login(self):
         '''Clear the text fields'''
@@ -48,6 +52,9 @@ class InviteDialog(Popup):
             self.lb_error.size_hint_y = None
             self.lb_error.height = 0
             self.size = (400, 120)
+
+    def check_invite(self):
+        print('hi')
 
     def _cancel(self):
         self.dismiss()
