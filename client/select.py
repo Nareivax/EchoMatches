@@ -1,13 +1,13 @@
 #!/usr/bin/python
 '''Code for the server connect interaction'''
 
-import sys
-import socket
+import _socket as socket
 
 from kivy.app import App
 from kivy.uix.screenmanager import Screen, SlideTransition
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+
 
 class Select(Screen):
     '''Class for the server select screen on client app'''

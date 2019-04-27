@@ -8,6 +8,7 @@ import json
 from threading import Thread
 
 import redis
+
 from echo_common.msg_types import MsgType
 from echo_common.status_types import Status
 
@@ -80,11 +81,11 @@ class EchoClient(Thread):
                     if REDIS_CONN.hexists(client_msg['content'], 'ip'):
                         reply_msg = setup_msg(MsgType['STATUS'], Status['ERROR'])
                         _clientconn.send(reply_msg.encode())
-                    else:
+                    #else:
                         
 
                 if client_msg['type'] == MsgType['INV']:
-                    print('inite')
+                    print('invite')
 
                 print(client_msg)
 

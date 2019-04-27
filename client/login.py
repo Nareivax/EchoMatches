@@ -8,6 +8,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
 from echo_common.msg_types import MsgType
 from echo_common.status_types import Status
 
+
 class Login(Screen):
     '''Class for the login screen on client app'''
     def user_login(self, login_text, login_type):

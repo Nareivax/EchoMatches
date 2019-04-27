@@ -1,19 +1,18 @@
 #!/usr/bin/python
 '''Clientside Implementation of Stage Striker including gui'''
-import os
+
 import sys
-import socket
 import signal
 import json
 
 from kivy.lang.builder import Builder
 from kivy.app import App
-from kivy.properties import StringProperty
-from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
+
+from kivy.uix.screenmanager import ScreenManager
 
 from client.lobby import Lobby
-from client.select import Select
 from client.login import Login
+from client.select import Select
 
 ###### Host and Port variables for socket connections ######
 HOST = '127.0.0.1'
